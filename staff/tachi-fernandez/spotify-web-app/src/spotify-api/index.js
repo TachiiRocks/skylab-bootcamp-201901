@@ -1,35 +1,31 @@
-
 'use strict'
 
 require('isomorphic-fetch')
 
-// const { env: { SPOTIFYTOKEN  } = process
-
-
 /**
  * Spotify API client.
- * 
+ *
  * @version 2.0.0
  */
 const spotifyApi = {
-    token: 'BQCTuxzuWwhdWj8KJIoX8Zdb3Qt1yFqbIxs6436A8I0CLhboLOt1wU47J39ievMax8wtOl2_p6H0-T8SKKvC01fOtLeqFlW9c41nwLBn6fNx81gWF5tsABicdhLdgBUg-TIeI-1qF8cDEY1x5R4',
+    // token: 'NO-TOKEN',
+    token: 'BQCM2hkggG9o2nat8myQM9Aazti6KPsQ5CIUkH9ShQU4F2w4e6I-MzB_gJCYLh28BwoizQPS-IDyDjG7Cz12YHb8y1rPMXixrvt41LZAWP3VflEswurXx80t1h8D8s_hu6L79wOsYOvzPqeGyUI',
     url: 'https://api.spotify.com/v1',
     /**
      * Searches artists.
-     * 
+     *
      * @param {string} query - The text to match on artists search.
      * @retuns {Promise} - Resolves with artists, otherwise rejects with error.
-     * 
+     *
      * @throws {TypeError} - On wrong parameters type.
      * @throws {Error} - On empty parameters value.
      */
     searchArtists(query) {
-        debugger
         if (typeof query !== 'string') throw TypeError(`${query} is not a string`)
 
         if (!query.trim().length) throw Error('query is empty')
-
-        fetch(`${this.url}/search?q=${query}&type=artist`, {
+        
+        return fetch(`${this.url}/search?q=${query}&type=artist`, {
             method: 'GET',
             headers: {
                 authorization: `Bearer ${this.token}`
@@ -37,21 +33,20 @@ const spotifyApi = {
         })
             .then(response => response.json())
             .then(response => {
-                debugger
+                
                 if(response.error)throw Error(response.error.message)
 
                 const {artists: {items}} = response
-
                 return items
             })
     },
 
 /**
      * Retrieves albums from artist.
-     * 
+     *
      * @param {string} artistId - The artist to retrieve albums from.
      * @returns {Promise} - Resolves with albums, otherwise rejects with error.
-     * 
+     *
      * @throws {TypeError} - On wrong parameters type.
      * @throws {Error} - On empty parameters value.
      */
@@ -71,15 +66,15 @@ const spotifyApi = {
 
         /**
      * Retrieves tracks from album.
-     * 
+     *
      * @param {string} albumId - The album to retrieve tracks from.
      * @preturns {Promise} - Resolves with tracks, otherwise rejects with error.
-     * 
+     *
      * @throws {TypeError} - On wrong parameters type.
      * @throws {Error} - On empty parameters value.
      */
     retrieveTracks(albumId) {
-        fetch(`${this.url}/albums/${albumId}/tracks`, {
+        return fetch(`${this.url}/albums/${albumId}/tracks`, {
             method: 'GET',
             headers: {
                 authorization: `Bearer ${this.token}`
@@ -92,10 +87,10 @@ const spotifyApi = {
 
     /**
      * Retrieves track.
-     * 
+     *
      * @param {string} trackId - The id of the track to be retrieved.
      * @returns {Promise} Resolves with track, otherwise rejects with error.
-     * 
+     *
      * @throws {TypeError} - On wrong parameters type.
      * @throws {Error} - On empty parameters value.
      */

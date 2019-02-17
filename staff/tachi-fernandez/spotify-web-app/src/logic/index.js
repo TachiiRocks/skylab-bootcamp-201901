@@ -99,20 +99,18 @@ class Logic {
             }))
     }
 
-   
-    
-   /**
+    // TODO updateUser and removeUser
+    /**
      * Search artists.
      * 
      * @param {string} query 
      * @returns {Promise}
      */
     searchArtists(query) {
-        debugger
         if (typeof query !== 'string') throw TypeError(`${query} is not a string`)
-
+        
         if (!query.trim().length) throw Error('query is empty')
-        debugger
+
         return spotifyApi.searchArtists(query)
     }
 
@@ -237,6 +235,6 @@ class Logic {
                 return userApi.update(this.__userId__, this.__userApiToken__, { favoriteTracks })
             })
     }
-
 }
+
 module.exports = Logic

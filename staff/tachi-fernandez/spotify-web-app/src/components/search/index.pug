@@ -4,7 +4,7 @@ include ../feedback/index
 
 block content
     section(classname='search container')
-      form(method='post',action='search')
+      form(method='POST',action='/search')
         div(classname='row')
           div(classname=' col input-group mb-3')
             div(classname='input-group-prepend')
@@ -13,4 +13,5 @@ block content
             input(type='text', classname='form-control', name='query', placeholder='Search an artist...', aria-label='Default', aria-describedby='inputGroup-sizing-default')
           button(type='submit', classname='btn btn-outline-primary') Search
           if feedback
-            +feedback(feedback, 'warn')
+            +feedback(feedback, 'error')
+

@@ -34,19 +34,6 @@ function pullFeedback(req) {
     return feedback
 }
 
-function renderPage(content) {
-    return `<html>
-<head>
-    <title>HELLO WORLD!</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-</head>
-<body class="main">
-    <h1>HELLO WORLD! 🤡</h1>
-    ${content}
-</body>
-</html>`
-}
-
 app.get('/', (req, res) => {
     res.render('landing')
 })
@@ -70,7 +57,7 @@ app.post('/register', formBodyParser, (req, res) => {
 
     try {
         logic.registerUser(name, surname, email, password, passwordConfirm)
-            .then(() => res.render('register-confirm' , { email }))
+            .then(() => res.render('register-confirm', {email}))
             .catch(({ message }) => {
                 req.session.feedback = message
 
@@ -115,6 +102,7 @@ app.post('/login', formBodyParser, (req, res) => {
     }
 })
 
+
 app.get('/search', (req, res) => {
     try {
         const { session: { feedback } } = req
@@ -123,7 +111,7 @@ app.get('/search', (req, res) => {
 
         if (logic.isUserLoggedIn)
             logic.retrieveUser()
-                .then( () => res.render('search'))
+                .then(user => res.render('search', { feedback }))
                 .catch(({ message }) => {
                     req.session.feedback = message
 
@@ -137,20 +125,24 @@ app.get('/search', (req, res) => {
     }
 })
 
-app.post('/search',formBodyParser, (req,res) => {
-    const { body:{ query } } = req
-
+app.post('/search', formBodyParser, (req, res) =>{
+    
     const logic = logicFactory.create(req)
 
     try{
-        logic.searchArtists(query)
-            .then(items => console.log(items)
-            // res.redirect('/artists')        
-            ).catch(({ message }) => {
-                req.session.feedback = message
+        const { body: { query }} = req
 
-                res.redirect('/search')
-            })
+        logic.searchArtists(query)
+        .then( (results) => {
+            res.redirect('/search/artist')
+            res.render('artists', {results})
+        })
+        .catch(({ message }) => {
+            req.session.feedback = message
+
+            res.redirect('/search')
+        })
+
     } catch ({ message }) {
         req.session.feedback = message
 
@@ -158,27 +150,9 @@ app.post('/search',formBodyParser, (req,res) => {
     }
 })
 
-// app.get('/artists', (req, res) => {
-//     try {
-//         const { session: { feedback } } = req
+app.get('/artists', (req, res) => {
 
-//         const logic = logicFactory.create(req)
-
-//         if (logic.isUserLoggedIn)
-//             logic.retrieveUser()
-//                 .then( () => res.render('artists'))
-//                 .catch(({ message }) => {
-//                     req.session.feedback = message
-
-//                     res.redirect('/search')
-//                 })
-//         else res.redirect('/login')
-//     } catch ({ message }) {
-//         req.session.feedback = message
-
-//         res.redirect('/search')
-//     }
-// })
+})
 
 
 app.post('/logout', (req, res) => {
@@ -187,13 +161,11 @@ app.post('/logout', (req, res) => {
     logic.logOutUser()
 
     res.redirect('/')
-})
+})    
 
-app.get('*', (req, res) => res.send(404, renderPage(`<section class="not-found">
-        <h2>NOT FOUND</h2>
 
-        Go <a href="/">Search</a>
-    </section>`)))
-
+app.get('*', (req, res) => {
+    res.status(404)
+    res.render('not-found')})
 
 app.listen(port, () => console.log(`server running on port ${port}`))
