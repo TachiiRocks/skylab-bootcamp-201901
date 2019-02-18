@@ -5,8 +5,9 @@ include ../feedback/index
 block content
     section.login
       h2 Login
+      div(class='login__form')
       form(method='POST', action='/login')
-        input(name='email', type='email', placeholder='email', required='')
+        input(class='login__email' name='email', type='email', placeholder='email', required='' autofocus)
         input(name='password', type='password', placeholder='password', required='')
         button(type='submit') Login
       if feedback

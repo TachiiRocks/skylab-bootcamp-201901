@@ -1,0 +1,9 @@
+extends ../layout
+
+include ../feedback/index
+
+block content
+  section
+    h3 Tracks
+    each track in tracks
+      a(href=`/track/${track.id}`) #{track.name}

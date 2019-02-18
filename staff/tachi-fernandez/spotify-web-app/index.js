@@ -126,7 +126,7 @@ app.get('/search', (req, res) => {
 })
 
 app.post('/search', formBodyParser, (req, res) =>{
-    
+    const { session: { feedback }} = req
     const logic = logicFactory.create(req)
 
     try{
@@ -134,7 +134,6 @@ app.post('/search', formBodyParser, (req, res) =>{
 
         logic.searchArtists(query)
         .then( (results) => {
-            res.redirect('/search/artist')
             res.render('artists', {results})
         })
         .catch(({ message }) => {
@@ -150,9 +149,78 @@ app.post('/search', formBodyParser, (req, res) =>{
     }
 })
 
-app.get('/artists', (req, res) => {
+app.get('/artist/:artistId', (req, res) => {
+    const {params:{artistId}} = req
 
+    const logic = logicFactory.create(req)
+
+    try{
+
+        logic.retrieveAlbums(artistId)
+        .then( (albums) => {
+            res.render('albums', {albums})
+        })
+        .catch(({ message }) => {
+            req.session.feedback = message
+
+            res.redirect('/search')
+        })
+
+    } catch ({ message }) {
+        req.session.feedback = message
+
+        res.redirect('/search')
+    }
 })
+
+app.get('/artist/albums/:albumId', (req, res) => {
+    const {params:{albumId , artistId}} = req
+    console.log(albumId)
+    const logic = logicFactory.create(req)
+
+    try{
+
+        logic.retrieveTracks(albumId)
+        .then( (tracks) => {
+            res.render('tracks', {tracks,artistId})
+        })
+        .catch(({ message }) => {
+            req.session.feedback = message
+
+            res.redirect('/search')
+        })
+
+    } catch ({ message }) {
+        req.session.feedback = message
+
+        res.redirect('/search')
+    }
+})
+
+app.get('/track/:trackId', (req, res) => {
+    const {params:{trackId,albumId}} = req
+    const logic = logicFactory.create(req)
+
+    try{
+
+        logic.retrieveTrack(trackId)
+        .then( (track) => {
+            res.render('track', {track,albumId})
+        })
+        .catch(({ message }) => {
+            req.session.feedback = message
+
+            res.redirect('/search')
+        })
+
+    } catch ({ message }) {
+        req.session.feedback = message
+
+        res.redirect('/search')
+    }
+})
+
+
 
 
 app.post('/logout', (req, res) => {

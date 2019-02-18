@@ -5,5 +5,6 @@ include ../feedback/index
 block content
   section
     h3 Artists
-    
-  
+    each result in results
+      a(href=`artist/${result.id}`) #{result.name}
+      img(src=`${result.images[0] ? result.images[0].url :  '' }`)

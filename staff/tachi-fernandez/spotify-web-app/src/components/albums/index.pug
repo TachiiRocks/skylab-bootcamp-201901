@@ -1,0 +1,10 @@
+extends ../layout
+
+include ../feedback/index
+
+block content
+  section
+    h3 Albums
+    each album in albums
+      a(href=`albums/${album.id}`) #{album.name}
+      img(src=`${album.images[0] ? album.images[0].url :  '' }`)

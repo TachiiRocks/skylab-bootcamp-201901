@@ -1,0 +1,11 @@
+extends ../layout
+
+include ../feedback/index
+
+block content
+  section
+    h3 Track
+      audio(src=`${track.preview_url}`, controls)
+      img(src='/logo.png')
+      a Back
+
